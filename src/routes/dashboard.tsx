@@ -12,8 +12,6 @@ import {
   Users, 
   Settings, 
   LogOut,
-  Mail,
-  Calendar,
   Menu,
   MapPin,
 } from 'lucide-react'
@@ -28,9 +26,6 @@ const sidebarLinks = [
   { icon: Home, label: 'Dashboard', href: '/dashboard' },
   { icon: Users, label: 'Users', href: '/dashboard/users' },
   { icon: MapPin, label: 'Locations', href: '/dashboard/locations' },
-  { icon: Mail, label: 'Messages', href: '/dashboard/messages' },
-  { icon: Calendar, label: 'Calendar', href: '/dashboard/calendar' },
-  { icon: Settings, label: 'Settings', href: '/dashboard/settings' },
 ]
 
 function DashboardPage() {
@@ -44,17 +39,23 @@ function DashboardPage() {
 
   const Sidebar = () => (
     <div className="p-6">
-      <div className="flex items-center space-x-3">
-        <div className="w-10 h-10 rounded-full bg-gradient-to-r from-primary to-secondary flex items-center justify-center text-white font-bold">
-          {user?.name.split(' ').map(n => n[0]).join('')}
+      <Button
+        variant="ghost"
+        className="w-full justify-start hover:bg-accent mb-6 p-3"
+        onClick={() => navigate({ to: '/dashboard/profile' })}
+      >
+        <div className="flex items-center space-x-3">
+          <div className="w-10 h-10 rounded-full bg-gradient-to-r from-primary to-secondary flex items-center justify-center text-white font-bold">
+            {user?.name.split(' ').map(n => n[0]).join('')}
+          </div>
+          <div className="text-left">
+            <h3 className="font-medium">{user?.name}</h3>
+            <p className="text-sm text-muted-foreground">{user?.email}</p>
+          </div>
         </div>
-        <div>
-          <h3 className="font-medium">{user?.name}</h3>
-          <p className="text-sm text-muted-foreground">{user?.role}</p>
-        </div>
-      </div>
+      </Button>
       
-      <nav className="mt-6">
+      <nav className="space-y-1">
         {sidebarLinks.map((link, index) => (
           <Button
             key={index}

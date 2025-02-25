@@ -4,8 +4,6 @@ export interface Location {
   description: string
   itemCount: number
   address: string
-  city: string
-  country: string
   status: 'Active' | 'Inactive'
   lat: number
   lng: number
@@ -16,8 +14,6 @@ export interface NewLocation {
   description: string
   itemCount: number
   address: string
-  city: string
-  country: string
   lat: number
   lng: number
 }

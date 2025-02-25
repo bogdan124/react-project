@@ -9,6 +9,7 @@ interface User {
   name: string
   role: string
   status: 'Active' | 'Inactive'
+  password: string // Add password to the User interface
 }
 
 interface AuthState {
@@ -36,7 +37,7 @@ export const useAuth = create<AuthState>()(
           const isValid = await verifyPassword(password, user.password)
           
           if (isValid) {
-            
+         
             const token = btoa(JSON.stringify({ 
               id: user.id, 
               email: user.email,
@@ -56,7 +57,8 @@ export const useAuth = create<AuthState>()(
                 email: user.email,
                 name: user.name,
                 role: user.role,
-                status: user.status
+                status: user.status,
+                password: user.password // Include password in the auth state
               },
               isAuthenticated: true
             })
@@ -76,7 +78,7 @@ export const useAuth = create<AuthState>()(
         const token = Cookies.get(COOKIE_NAME)
         const currentState = get()
         
-        
+        // If we have a token and we're not authenticated, try to restore the session
         if (token && !currentState.isAuthenticated) {
           try {
             const { id, timestamp } = JSON.parse(atob(token))
@@ -100,7 +102,8 @@ export const useAuth = create<AuthState>()(
                   email: user.email,
                   name: user.name,
                   role: user.role,
-                  status: user.status
+                  status: user.status,
+                  password: user.password // Include password when restoring session
                 },
                 isAuthenticated: true
               })

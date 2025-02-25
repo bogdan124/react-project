@@ -21,8 +21,6 @@ const mockLocations: Location[] = [
     description: 'Here we have cats that are abandoned by some persons and we care for them. Our dedicated team provides food, shelter, and medical care for all our feline friends.',
     itemCount: 25,
     address: '123 Care Avenue',
-    city: 'New York',
-    country: 'USA',
     status: 'Active',
     lat: 40.7128,
     lng: -74.0060
@@ -33,8 +31,6 @@ const mockLocations: Location[] = [
     description: 'A safe space for abandoned and rescued dogs. We provide rehabilitation, training, and lots of love until they find their forever homes.',
     itemCount: 32,
     address: '456 Rescue Street',
-    city: 'San Francisco',
-    country: 'USA',
     status: 'Active',
     lat: 37.7749,
     lng: -122.4194
@@ -45,8 +41,6 @@ const mockLocations: Location[] = [
     description: 'Dedicated to the rescue and rehabilitation of injured wildlife. Our facility handles everything from small birds to medium-sized mammals.',
     itemCount: 18,
     address: '789 Nature Road',
-    city: 'London',
-    country: 'UK',
     status: 'Active',
     lat: 51.5074,
     lng: -0.1278
@@ -134,6 +128,7 @@ function LocationsPage() {
               onLocationClick={handleLocationClick}
               onMapClick={handleMapClick}
               onDeleteLocation={handleDeleteLocation}
+              onEditLocation={handleEditLocation}
             />
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">

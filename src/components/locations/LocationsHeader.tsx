@@ -57,9 +57,7 @@ export function LocationsHeader({
           {!showMap && (
             <Dialog open={isAddModalOpen} onOpenChange={onAddModalChange}>
               <DialogTrigger asChild>
-                <Button className="w-full md:w-auto bg-gradient-to-r from-primary to-secondary text-white">
-                  Add Location
-                </Button>
+          
               </DialogTrigger>
               <DialogContent>
                 <DialogHeader>

@@ -2,12 +2,49 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { NewLocation } from '@/types/locations'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
+import { MapContainer, TileLayer, Marker, useMapEvents, useMap } from 'react-leaflet'
+import { MapPin } from 'lucide-react'
+import 'leaflet/dist/leaflet.css'
+import L from 'leaflet'
+
+// Fix for default marker icon
+delete (L.Icon.Default.prototype as any)._getIconUrl
+L.Icon.Default.mergeOptions({
+  iconRetinaUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon-2x.png',
+  iconUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon.png',
+  shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-shadow.png',
+})
+
+// Bucharest coordinates
+const BUCHAREST_CENTER: [number, number] = [44.4268, 26.1025]
 
 interface LocationFormProps {
   initialData?: Partial<NewLocation>
   onSubmit: (location: NewLocation) => void
   onCancel: () => void
+}
+
+function MapMarker({ position, setPosition }: { 
+  position: [number, number]
+  setPosition: (pos: [number, number]) => void 
+}) {
+  useMapEvents({
+    click(e) {
+      setPosition([e.latlng.lat, e.latlng.lng])
+    },
+  })
+
+  return <Marker position={position} />
+}
+
+// Component to handle initial map center
+function InitialMapView() {
+  const map = useMap()
+  useEffect(() => {
+    map.setView(BUCHAREST_CENTER, 12)
+  }, [map])
+  return null
 }
 
 export function LocationForm({ initialData, onSubmit, onCancel }: LocationFormProps) {
@@ -16,11 +53,42 @@ export function LocationForm({ initialData, onSubmit, onCancel }: LocationFormPr
     description: initialData?.description || '',
     itemCount: initialData?.itemCount || 0,
     address: initialData?.address || '',
-    city: initialData?.city || '',
-    country: initialData?.country || '',
-    lat: initialData?.lat || 0,
-    lng: initialData?.lng || 0,
+    lat: initialData?.lat || BUCHAREST_CENTER[0],
+    lng: initialData?.lng || BUCHAREST_CENTER[1],
   })
+
+  const [position, setPosition] = useState<[number, number]>([
+    initialData?.lat || BUCHAREST_CENTER[0],
+    initialData?.lng || BUCHAREST_CENTER[1]
+  ])
+  const [isAddressLoading, setIsAddressLoading] = useState(false)
+
+  useEffect(() => {
+    const fetchAddress = async () => {
+      setIsAddressLoading(true)
+      try {
+        const response = await fetch(
+          `https://nominatim.openstreetmap.org/reverse?format=json&lat=${position[0]}&lon=${position[1]}`
+        )
+        const data = await response.json()
+        
+        if (data.display_name) {
+          setFormData(prev => ({
+            ...prev,
+            address: data.display_name,
+            lat: position[0],
+            lng: position[1]
+          }))
+        }
+      } catch (error) {
+        console.error('Error fetching address:', error)
+      } finally {
+        setIsAddressLoading(false)
+      }
+    }
+
+    fetchAddress()
+  }, [position])
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
@@ -69,36 +137,30 @@ export function LocationForm({ initialData, onSubmit, onCancel }: LocationFormPr
         />
       </div>
       <div>
-        <Label htmlFor="address">Address</Label>
-        <Input 
-          id="address" 
-          placeholder="Enter street address" 
-          value={formData.address}
-          onChange={(e) => setFormData({ ...formData, address: e.target.value })}
-          required 
-        />
-      </div>
-      <div className="grid grid-cols-2 gap-4">
-        <div>
-          <Label htmlFor="city">City</Label>
-          <Input 
-            id="city" 
-            placeholder="Enter city" 
-            value={formData.city}
-            onChange={(e) => setFormData({ ...formData, city: e.target.value })}
-            required 
-          />
+        <Label>Location</Label>
+        <div className="h-[300px] mt-2 rounded-md overflow-hidden border border-input">
+          <MapContainer
+            center={position}
+            zoom={12}
+            style={{ height: '100%', width: '100%' }}
+          >
+            <TileLayer
+              attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+              url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+            />
+            <MapMarker position={position} setPosition={setPosition} />
+            <InitialMapView />
+          </MapContainer>
         </div>
-        <div>
-          <Label htmlFor="country">Country</Label>
-          <Input 
-            id="country" 
-            placeholder="Enter country" 
-            value={formData.country}
-            onChange={(e) => setFormData({ ...formData, country: e.target.value })}
-            required 
-          />
-        </div>
+        <p className="text-sm text-muted-foreground mt-2">
+          {isAddressLoading ? 'Fetching address...' : 'Click on the map to set the location'}
+        </p>
+        {formData.address && !isAddressLoading && (
+          <p className="text-sm mt-1">
+            <MapPin className="w-3 h-3 inline-block mr-1" />
+            {formData.address}
+          </p>
+        )}
       </div>
       <div className="flex justify-end space-x-2">
         <Button 

@@ -12,10 +12,7 @@ interface LocationCardProps {
 
 export function LocationCard({ location, onViewMap, onDelete, onEdit }: LocationCardProps) {
   return (
-    <Card 
-      className="overflow-hidden hover:shadow-lg transition-shadow cursor-pointer"
-      onClick={() => onEdit(location)}
-    >
+    <Card className="overflow-hidden hover:shadow-lg transition-shadow">
       <CardHeader className="pb-3">
         <div className="flex items-center justify-between">
           <CardTitle className="text-xl">{location.name}</CardTitle>
@@ -23,20 +20,21 @@ export function LocationCard({ location, onViewMap, onDelete, onEdit }: Location
             <Button 
               variant="ghost" 
               size="icon"
-              onClick={(e) => {
-                e.stopPropagation()
-                onViewMap(location)
-              }}
+              onClick={() => onViewMap(location)}
             >
               <MapPin className="w-4 h-4" />
             </Button>
             <Button 
               variant="ghost" 
               size="icon"
-              onClick={(e) => {
-                e.stopPropagation()
-                onDelete(location.id)
-              }}
+              onClick={() => onEdit(location)}
+            >
+              <Pencil className="w-4 h-4" />
+            </Button>
+            <Button 
+              variant="ghost" 
+              size="icon"
+              onClick={() => onDelete(location.id)}
             >
               <Trash2 className="w-4 h-4 text-destructive" />
             </Button>
@@ -46,14 +44,9 @@ export function LocationCard({ location, onViewMap, onDelete, onEdit }: Location
       <CardContent className="space-y-4">
         <p className="text-sm text-gray-600 line-clamp-3">{location.description}</p>
         <div className="flex items-center justify-between">
-          <div className="text-sm text-gray-600">
-            {location.city}, {location.country}
-          </div>
           <div className="text-sm font-medium">
             Animals: {location.itemCount}
           </div>
-        </div>
-        <div className="pt-2">
           <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium
             ${location.status === 'Active' 
               ? 'bg-success/10 text-success' 
@@ -61,6 +54,10 @@ export function LocationCard({ location, onViewMap, onDelete, onEdit }: Location
             }`}>
             {location.status}
           </span>
+        </div>
+        <div className="text-sm text-muted-foreground">
+          <MapPin className="w-3 h-3 inline-block mr-1" />
+          {location.address}
         </div>
       </CardContent>
     </Card>

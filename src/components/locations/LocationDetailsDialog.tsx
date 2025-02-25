@@ -38,16 +38,7 @@ export function LocationDetailsDialog({ location, onClose, onDelete }: LocationD
             <Label>Address</Label>
             <p className="text-sm text-gray-600">{location.address}</p>
           </div>
-          <div className="grid grid-cols-2 gap-4">
-            <div>
-              <Label>City</Label>
-              <p className="text-sm text-gray-600">{location.city}</p>
-            </div>
-            <div>
-              <Label>Country</Label>
-              <p className="text-sm text-gray-600">{location.country}</p>
-            </div>
-          </div>
+          
           <div>
             <Label>Status</Label>
             <p>

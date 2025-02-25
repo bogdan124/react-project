@@ -3,11 +3,34 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Location } from '@/types/locations'
 import { useState } from 'react'
+import { MapContainer, TileLayer, Marker, useMap } from 'react-leaflet'
+import { MapPin } from 'lucide-react'
+import 'leaflet/dist/leaflet.css'
+import L from 'leaflet'
+import { useEffect } from 'react'
+
+delete (L.Icon.Default.prototype as any)._getIconUrl
+L.Icon.Default.mergeOptions({
+  iconRetinaUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon-2x.png',
+  iconUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon.png',
+  shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-shadow.png',
+})
 
 interface EditLocationFormProps {
   location: Location
   onSubmit: (location: Location) => void
   onCancel: () => void
+}
+
+// Component to center the map on the location
+function MapCenter({ position }: { position: [number, number] }) {
+  const map = useMap()
+  
+  useEffect(() => {
+    map.setView(position, 13)
+  }, [map, position])
+  
+  return null
 }
 
 export function EditLocationForm({ location, onSubmit, onCancel }: EditLocationFormProps) {
@@ -22,6 +45,8 @@ export function EditLocationForm({ location, onSubmit, onCancel }: EditLocationF
     const value = e.target.value === '' ? '' : parseInt(e.target.value)
     setFormData({ ...formData, itemCount: value === '' ? 0 : value })
   }
+
+  const position: [number, number] = [location.lat, location.lng]
 
   return (
     <form className="space-y-4" onSubmit={handleSubmit}>
@@ -60,36 +85,32 @@ export function EditLocationForm({ location, onSubmit, onCancel }: EditLocationF
         />
       </div>
       <div>
-        <Label htmlFor="address">Address</Label>
-        <Input 
-          id="address" 
-          placeholder="Enter street address" 
-          value={formData.address}
-          onChange={(e) => setFormData({ ...formData, address: e.target.value })}
-          required 
-        />
-      </div>
-      <div className="grid grid-cols-2 gap-4">
-        <div>
-          <Label htmlFor="city">City</Label>
-          <Input 
-            id="city" 
-            placeholder="Enter city" 
-            value={formData.city}
-            onChange={(e) => setFormData({ ...formData, city: e.target.value })}
-            required 
-          />
+        <Label>Location</Label>
+        <div className="h-[300px] mt-2 rounded-md overflow-hidden border border-input">
+          <MapContainer
+            center={position}
+            zoom={13}
+            style={{ height: '100%', width: '100%' }}
+            dragging={false}
+            touchZoom={false}
+            doubleClickZoom={false}
+            scrollWheelZoom={false}
+            boxZoom={false}
+            keyboard={false}
+            zoomControl={false}
+          >
+            <TileLayer
+              attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+              url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+            />
+            <Marker position={position} />
+            <MapCenter position={position} />
+          </MapContainer>
         </div>
-        <div>
-          <Label htmlFor="country">Country</Label>
-          <Input 
-            id="country" 
-            placeholder="Enter country" 
-            value={formData.country}
-            onChange={(e) => setFormData({ ...formData, country: e.target.value })}
-            required 
-          />
-        </div>
+        <p className="text-sm mt-2">
+          <MapPin className="w-3 h-3 inline-block mr-1" />
+          {formData.address}
+        </p>
       </div>
       <div>
         <Label htmlFor="status">Status</Label>
