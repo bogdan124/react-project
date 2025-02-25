@@ -22,7 +22,7 @@ interface UsersState {
   hashPassword: (password: string) => Promise<string>
 }
 
-// Create initial users including admin with hashed passwords
+
 const initialUsers: User[] = [
   { 
     id: 1, 
@@ -37,7 +37,7 @@ const initialUsers: User[] = [
     id: 2, 
     name: 'John Doe', 
     email: 'john@example.com',
-    // Default password: "password123", hashed
+
     password: '$2a$10$rU4WZqRdFY9Z9cq5bV5tA.9X9X9X9X9X9X9X9X9X9X9X9X9X9X9X', 
     role: 'User', 
     status: 'Active' 
@@ -46,7 +46,7 @@ const initialUsers: User[] = [
     id: 3, 
     name: 'Jane Smith', 
     email: 'jane@example.com',
-    // Default password: "password123", hashed
+    
     password: '$2a$10$rU4WZqRdFY9Z9cq5bV5tA.9X9X9X9X9X9X9X9X9X9X9X9X9X9X9X', 
     role: 'User', 
     status: 'Active' 

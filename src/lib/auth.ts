@@ -36,6 +36,7 @@ export const useAuth = create<AuthState>()(
           const isValid = await verifyPassword(password, user.password)
           
           if (isValid) {
+            
             const token = btoa(JSON.stringify({ 
               id: user.id, 
               email: user.email,
@@ -75,7 +76,7 @@ export const useAuth = create<AuthState>()(
         const token = Cookies.get(COOKIE_NAME)
         const currentState = get()
         
-        // If we have a token and we're not authenticated, try to restore the session
+        
         if (token && !currentState.isAuthenticated) {
           try {
             const { id, timestamp } = JSON.parse(atob(token))

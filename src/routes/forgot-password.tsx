@@ -28,6 +28,8 @@ function ForgotPasswordPage() {
 
     if (user) {
 
+      
+      // For demo purposes, we'll just show a success message
       setStatus('success')
     } else {
       setStatus('error')

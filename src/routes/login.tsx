@@ -65,9 +65,7 @@ function LoginPage() {
             <CardDescription>
               Sign in with your account credentials
             </CardDescription>
-            <div className="text-sm text-muted-foreground mt-2">
-              
-            </div>
+            
           </CardHeader>
           <CardContent>
             <form className="space-y-6" onSubmit={handleSignIn}>
